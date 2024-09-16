@@ -1,0 +1,68 @@
+﻿@using BrightStar.Services.Domain.Entities
+@using System.Security.Claims
+@model IEnumerable<EventSubscription>
+
+
+
+<div class="d-flex justify-content-center">
+    @if (!Model.Any())
+    {
+        <h4 class="mt-5">You are not subscribed to any events.</h4>
+    }
+    else
+    {
+   
+        <div class="card shadow border-0 mt-4" style="width: 80%;">
+            <div class="card-header bg-secondary bg-gradient py-3">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h1 class="text-white"> My Subscribed Events</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row pb-3">
+                    <div class="col-6">
+                    </div>
+                    <div class="col-6 text-end">
+                        <a asp-action="Index" class="btn btn-outline-primary">
+                            Back To Events
+                        </a>
+
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>EventId</th>
+                            <th>SubscriptionId</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.EventId</td>
+                                <td>@item.SubscriptionId</td>
+
+                                <td>
+                                    <form asp-action="Unsubscribe" method="post">
+                                        <input type="hidden" name="eventId" value="@item.EventId" />
+                                        <input type="hidden" name="userId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+                                        <button type="submit" class="btn btn-outline-danger">
+                                            <i class="bi bi-x-circle-fill text-danger"></i> Unsubscribe
+                                        </button>
+                                    </form>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+  
+</div>

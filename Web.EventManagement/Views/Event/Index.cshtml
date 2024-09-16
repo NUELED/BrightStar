@@ -1,0 +1,89 @@
+﻿@using BrightStar.Services.Application.Common.Utility
+@using BrightStar.Services.Domain.Entities
+@using System.Security.Claims
+@model IEnumerable<Event>
+
+<div class="d-flex justify-content-center">
+    <div class="card shadow border-0 mt-4" style="width: 80%;">
+        <div class="card-header bg-secondary bg-gradient py-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h2 class="text-white">Event Dashboard</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <div class="row pb-3">
+                <div class="col-6">
+                </div>
+                <div class="col-6 text-end">
+                    <a asp-action="MySubscriptions" class="btn btn-outline-primary">
+                        My Subscribed Events
+                    </a>
+                    @if (User.IsInRole(SD.RoleAdmin) || User.IsInRole(SD.RoleOrganizer))
+                    {
+                        <a asp-action="Create" class="btn btn-outline-primary">
+                            <i class="bi bi-plus-square"></i> Create Event
+                        </a>
+                    }
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>EventCode</th>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>MaxParticipants</th>
+                        <th>UnSubscribe</th>
+                        <th>Subscribe</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.EventCode</td>
+                            <td>@item.Title</td>
+                            <td>@item.location</td>
+                            <td>@item.MaxParticipants</td>
+                            <td>
+                                <form asp-action="Unsubscribe" method="post">
+                                    <input type="hidden" name="eventId" value="@item.EventId" />
+                                    <input type="hidden" name="userId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="bi bi-x-circle-fill text-danger"></i> Unsubscribe
+                                    </button>
+                                </form>
+                            </td>
+
+                            <td>
+                                <form asp-action="Subscribe" method="post">
+                                    <input type="hidden" name="eventId" value="@item.EventId" />
+                                    <button type="submit" class="btn btn-outline-success">
+                                        <i class="bi bi-bell-fill text-success"></i> Subscribe
+                                    </button>
+                                </form>
+                            </td>
+                            @if (User.IsInRole(SD.RoleAdmin) || User.IsInRole(SD.RoleOrganizer))
+                            {
+                                <td>
+                                    <a asp-action="Delete" asp-route-eventId="@item.EventId" class="btn btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a asp-action="Update" asp-route-eventId="@item.EventId" class="btn btn-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
