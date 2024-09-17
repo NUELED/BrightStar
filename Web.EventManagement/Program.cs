@@ -6,12 +6,16 @@ using BrightStar.Services.Infrastructure.Data;
 using BrightStar.Services.Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.EventManagement.Extensions;
 using Web.EventManagement.SendEmail;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.AddOtherServices();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
