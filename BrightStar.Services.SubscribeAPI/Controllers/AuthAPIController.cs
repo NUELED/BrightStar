@@ -10,6 +10,7 @@ namespace BrightStar.Services.SubscribeAPI.Controllers
     [ApiController]
     public class AuthAPIController : ControllerBase
     {
+
         private readonly IAuthService _authService;
         protected ResponseDto _response;
 
@@ -35,7 +36,8 @@ namespace BrightStar.Services.SubscribeAPI.Controllers
                 _response.Message = "User Created Successfully";
             }
             return Ok(_response);
-        }
+        }   
+
 
 
         [HttpPost("login")]
@@ -51,6 +53,24 @@ namespace BrightStar.Services.SubscribeAPI.Controllers
             _response.Result = loginResponse;
             return Ok(_response);
         }
+
+
+
+        [HttpPost("login2")]
+        public async Task<IActionResult> Login2([FromBody] LoginRequestDto model)
+        {
+            var loginResponse = await _authService.Login2(model);
+            if (loginResponse.AccessToken == null)
+            {
+                _response.IsSuccess = false;
+                _response.Message = "Username or password is incorrect";
+                return BadRequest(_response);
+            }
+            _response.Result = loginResponse;
+            return Ok(_response);
+        }
+
+
 
 
         [HttpPost("AssignRole")]

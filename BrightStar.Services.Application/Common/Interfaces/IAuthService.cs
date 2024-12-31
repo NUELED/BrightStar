@@ -11,6 +11,7 @@ namespace BrightStar.Services.Application.Common.Interfaces
     {
         Task<string> Register(RegistrationRequestDto registrationRequestDto);
         Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto);
+        Task<TokenDto> Login2(LoginRequestDto loginRequestDto);
         Task<bool> AssignRole(string email, string roleName);
 
 

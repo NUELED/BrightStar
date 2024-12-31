@@ -4,6 +4,7 @@ using BrightStar.Services.Application.Common.Utility;
 using BrightStar.Services.Domain.Entities;
 using BrightStar.Services.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,7 @@ namespace BrightStar.Services.Infrastructure.Jwt_Auth
 
             var roles = await _userManager.GetRolesAsync(user);
             var token = _jwtTokenGen.GenerateToken(user, roles);
+            var tokenDto = _jwtTokenGen.GenerateToken2(user, roles, populateExp:true);
 
             UserDto userDto = new()
             {
@@ -75,6 +77,23 @@ namespace BrightStar.Services.Infrastructure.Jwt_Auth
 
             return loginResponseDto;
         }
+
+        public async Task<TokenDto> Login2(LoginRequestDto loginRequestDto)
+        {          
+            var user = await _db.AppUsers.FirstOrDefaultAsync(u => u.UserName.ToLower() == loginRequestDto.service_id.ToLower());
+        
+            if (user == null || !await _userManager.CheckPasswordAsync(user, loginRequestDto.password))
+            {
+                throw new UnauthorizedAccessException("Invalid username or password.");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            
+            var tokenDto = await _jwtTokenGen.GenerateToken2(user, roles, populateExp: true);
+
+            return  tokenDto;
+        }
+
 
         public async Task<string> Register(RegistrationRequestDto registrationRequestDto)
         {

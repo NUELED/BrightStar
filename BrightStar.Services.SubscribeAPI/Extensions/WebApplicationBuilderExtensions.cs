@@ -70,14 +70,16 @@ namespace BrightStar.Services.SubscribeAPI.Extensions
             {
                 x.RequireHttpsMetadata = true;
                 x.SaveToken = true;
-                x.TokenValidationParameters = new()
+                x.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidateLifetime = true,
+                    ValidateLifetime = true,               
+                    ValidateIssuerSigningKey = true,
+
                     ValidIssuer = appSetiings.Issuer,
                     ValidAudience = appSetiings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
                     ClockSkew = TimeSpan.Zero
                 };
             });

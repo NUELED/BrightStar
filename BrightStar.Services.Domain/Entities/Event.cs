@@ -13,27 +13,21 @@ namespace BrightStar.Services.Domain.Entities
     {
         [Key]
         public int EventId { get; set; }
-
         [Display(Name = "Max Participants")]
         public int MaxParticipants { get; set; }
         public string Title { get; set; }
         [ValidateNever]
         public string UserId { get; set; }
         [ValidateNever]
-        //[NotMapped]
+        ///[NotMapped]
         public AppUser User { get; set; }
-
         public int CurrentParticipants { get; set; }
-
         public string EventCode { get; set; }
         public DateTime Date { get; set; }
- 
         [Display(Name = "Start Time")]
         [DataType(DataType.Time)]
         public TimeSpan Time { get; set; }
         public string location { get; set; }
-        public string Description { get; set; } 
-
-
+        public string Description { get; set; }     
     }
 }

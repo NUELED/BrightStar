@@ -32,6 +32,18 @@ namespace BrightStar.Services.Infrastructure.Data
                 Id = 1,
                 Time = 60,
             });
+
+            modelBuilder.Entity<EventSubscription>()
+                        .HasOne(es => es.User)
+                        .WithMany()
+                        .HasForeignKey(es => es.UserId)
+                        .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete for User
+
+            //modelBuilder.Entity<EventSubscription>()
+            //            .HasOne(es => es.Event)
+            //            .WithMany(e => e.EventSubscriptions)
+            //            .HasForeignKey(es => es.EventId)
+            //            .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete for Event
         }
 
 

@@ -28,7 +28,6 @@ namespace BrightStar.Services.Domain.Entities
         public int EventId { get; set; }
         [ValidateNever]
         public Event Event { get; set; }
-
-
     }
+
 }
