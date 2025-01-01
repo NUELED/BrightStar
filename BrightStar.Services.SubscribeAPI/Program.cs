@@ -4,6 +4,7 @@ using BrightStar.Services.Infrastructure.Data;
 using BrightStar.Services.Infrastructure.Jwt_Auth;
 using BrightStar.Services.Infrastructure.Subscription;
 using BrightStar.Services.SubscribeAPI.Extensions;
+using BrightStar.Services.SubscribeAPI.HealthChecks;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -20,7 +21,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
 builder.AddOtherServices();
-builder.Services.AddHealthChecks().AddSqlServer(builder.Configuration.GetConnectionString("BrightConnect")!, name : "Sql Health");
+
+builder.Services.AddHealthChecks()
+    .AddSqlServer(
+        builder.Configuration.GetConnectionString("BrightConnect")!,
+        name: "Sql Health",
+        tags: new[] { "database" }) 
+    .AddCheck<CustomHealthCheck>(
+        "CustomHealthCheck",
+        tags: new[] { "custom" });
+builder.Services.AddHealthChecksUI().AddInMemoryStorage();
+//health checks url https://localhost:7075/healthchecks-ui#/healthchecks
+
+
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BrightConnect")));
 
 builder.Services.AddSwaggerGen();
@@ -54,6 +67,13 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
+app.MapHealthChecks("/health/custom", new HealthCheckOptions
+{
+    Predicate = reg => reg.Tags.Contains("custom"),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+app.UseHealthChecksUI();
+//app.UseHealthChecksUI(config => config.UIPath = "/healthchecks-ui");
 
 app.UseHttpsRedirection();
 app.UseRouting();
