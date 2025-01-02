@@ -1,6 +1,8 @@
 ﻿using BrightStar.Services.Application.Common.Interfaces;
 using BrightStar.Services.Domain.Entities;
+using BrightStar.Services.Infrastructure.BackgroundJobs;
 using BrightStar.Services.Infrastructure.Data;
+using BrightStar.Services.Infrastructure.EmailSending;
 using BrightStar.Services.Infrastructure.Jwt_Auth;
 using BrightStar.Services.Infrastructure.Subscription;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +25,13 @@ namespace BrightStar.Services.SubscribeAPI.Extensions
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+            builder.Services.AddScoped<IJobTestService, JobTestService>();
+
+            builder.Services.AddScoped<BirthdayJob>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IEmailSend, EmailSend>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+
             //builder.Services.AddScoped<IBaseService, BaseService>();
             builder.Services.AddScoped<ITokenProvider, TokenProvider>();
             builder.Services.AddControllers();

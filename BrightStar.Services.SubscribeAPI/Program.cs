@@ -1,10 +1,12 @@
 using BrightStar.Services.Application.Common.Interfaces;
 using BrightStar.Services.Domain.Entities;
+using BrightStar.Services.Infrastructure.BackgroundJobs;
 using BrightStar.Services.Infrastructure.Data;
 using BrightStar.Services.Infrastructure.Jwt_Auth;
 using BrightStar.Services.Infrastructure.Subscription;
 using BrightStar.Services.SubscribeAPI.Extensions;
 using BrightStar.Services.SubscribeAPI.HealthChecks;
+using Hangfire;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -21,6 +23,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
 builder.AddOtherServices();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 builder.Services.AddHealthChecks()
     .AddSqlServer(
@@ -31,6 +35,13 @@ builder.Services.AddHealthChecks()
         "CustomHealthCheck",
         tags: new[] { "custom" });
 builder.Services.AddHealthChecksUI().AddInMemoryStorage();
+builder.Services.AddHangfire(config =>
+{
+    config.UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("BrightConnect"));
+});
+builder.Services.AddHangfireServer();
 //health checks url https://localhost:7075/healthchecks-ui#/healthchecks
 
 
@@ -74,6 +85,7 @@ app.MapHealthChecks("/health/custom", new HealthCheckOptions
 });
 app.UseHealthChecksUI();
 //app.UseHealthChecksUI(config => config.UIPath = "/healthchecks-ui");
+app.UseHangfireDashboard(); 
 
 app.UseHttpsRedirection();
 app.UseRouting();
@@ -82,4 +94,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+RecurringJob.AddOrUpdate<BirthdayJob>("SendBirthdayMessages", job => job.ExecuteBirthDayMessageAsync(), Cron.Daily);
 
