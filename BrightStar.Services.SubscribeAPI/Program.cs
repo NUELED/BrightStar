@@ -6,6 +6,7 @@ using BrightStar.Services.Infrastructure.Jwt_Auth;
 using BrightStar.Services.Infrastructure.Subscription;
 using BrightStar.Services.SubscribeAPI.Extensions;
 using BrightStar.Services.SubscribeAPI.HealthChecks;
+using BrightStar.Services.SubscribeAPI.Middlewares;
 using Hangfire;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -65,6 +66,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -88,6 +90,7 @@ app.UseHealthChecksUI();
 app.UseHangfireDashboard(); 
 
 app.UseHttpsRedirection();
+//app.UseMiddleware<IpWhitelistMiddleware>();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
